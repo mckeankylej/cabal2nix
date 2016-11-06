@@ -96,7 +96,7 @@ instance Package Derivation where
 instance NFData Derivation
 
 instance Pretty Derivation where
-  pPrint drv@(MkDerivation {..}) = funargs (map text ("mkDerivation" : toAscList inputs)) $$ vcat
+  pPrint drv@(MkDerivation {..}) = funargs (map text ("mkDerivation" : toAscList inputs ++ ["cabal-install","..."])) $$ vcat
     [ text "mkDerivation" <+> lbrace
     , nest 2 $ vcat
       [ attr "pname"   $ doubleQuotes $ disp (packageName _pkgid)
@@ -113,6 +113,7 @@ instance Pretty Derivation where
       , onlyIf (_testDepends /= mempty) $ pPrintBuildInfo "test" _testDepends
       , boolattr "enableLibraryProfiling" _enableLibraryProfiling _enableLibraryProfiling
       , boolattr "enableExecutableProfiling" _enableExecutableProfiling _enableExecutableProfiling
+      , attr "buildTools" $ text "[ cabal-install ]"
       , boolattr "enableSplitObjs"  (not _enableSplitObjs) _enableSplitObjs
       , boolattr "doHaddock" (not _runHaddock) _runHaddock
       , boolattr "jailbreak" _jailbreak _jailbreak
